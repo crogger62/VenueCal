@@ -1,0 +1,18 @@
+{
+  "name": "venuecal",
+  "version": "1.0.0",
+  "description": "Denver venue calendar — Ticketmaster-backed personal calendar",
+  "main": "server.js",
+  "scripts": {
+    "start": "node scripts/fetch-and-cache.js",
+    "start:quick": "node server.js",
+    "dev": "node --watch server.js",
+    "lookup-venues": "node scripts/lookup-venues.js"
+  },
+  "dependencies": {
+    "axios": "^1.7.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2"
+  }
+}

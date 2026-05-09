@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VenueCal — Denver</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header>
+    <div class="header-left">
+      <span class="logo">VenueCal</span>
+      <span class="city">Denver</span>
+    </div>
+    <div class="header-right">
+      <div class="view-toggle">
+        <button id="btn-calendar" class="active">Calendar</button>
+        <button id="btn-agenda">Agenda</button>
+      </div>
+      <button id="btn-refresh" title="Refresh events">&#8635;</button>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- Calendar view -->
+    <div id="view-calendar">
+      <div class="month-nav">
+        <button id="prev-month">&#8249;</button>
+        <h2 id="month-label"></h2>
+        <button id="next-month">&#8250;</button>
+      </div>
+      <div class="weekday-headers">
+        <span>Sun</span><span>Mon</span><span>Tue</span>
+        <span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+      </div>
+      <div id="calendar-grid"></div>
+      <div id="day-panel" hidden></div>
+    </div>
+
+    <!-- Agenda view -->
+    <div id="view-agenda" hidden>
+      <div id="agenda-list"></div>
+    </div>
+
+    <div id="loading" hidden>Loading…</div>
+    <div id="error-msg" hidden></div>
+
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
