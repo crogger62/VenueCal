@@ -110,8 +110,11 @@ function eventRowHTML(e) {
   const link = e.url
     ? `<a class="ticket-link" href="${e.url}" target="_blank" rel="noopener noreferrer">Tickets</a>`
     : '';
+  const name = e.artistUrl
+    ? `<a class="event-name event-name-link" href="${e.artistUrl}" target="_blank" rel="noopener noreferrer">${e.name}</a>`
+    : `<span class="event-name">${e.name}</span>`;
 
-  return `<div class="event-row">${badge}<span class="event-name">${e.name}</span>${time}${link}</div>`;
+  return `<div class="event-row">${badge}${name}${time}${link}</div>`;
 }
 
 // ── Calendar ──────────────────────────────────────────────────────────────────

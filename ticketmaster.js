@@ -26,13 +26,25 @@ function bustCache() {
   cache.clear();
 }
 
+// Priority order for resolving an artist URL from TM attraction data.
+const ARTIST_LINK_PRIORITY = ['homepage', 'twitter', 'instagram', 'facebook', 'youtube', 'spotify'];
+
 // Normalize a raw TM event into the shape the frontend expects.
 function normalize(event) {
   const dates = event.dates?.start ?? {};
   const venue = event._embedded?.venues?.[0];
+  const att   = event._embedded?.attractions?.[0];
   const img =
     event.images?.find(i => i.ratio === '16_9' && i.width >= 640) ??
     event.images?.[0];
+
+  // Resolve artist URL: homepage → social fallback → TM artist page → null
+  const ext = att?.externalLinks ?? {};
+  let artistUrl = null;
+  for (const key of ARTIST_LINK_PRIORITY) {
+    if (ext[key]?.[0]?.url) { artistUrl = ext[key][0].url; break; }
+  }
+  if (!artistUrl && att?.url) artistUrl = att.url;
 
   return {
     id: event.id,
@@ -43,6 +55,7 @@ function normalize(event) {
     venueName: venue?.name ?? null,
     url: event.url ?? null,
     imageUrl: img?.url ?? null,
+    artistUrl,
   };
 }
 
