@@ -4,6 +4,10 @@ A personal music venue calendar for Denver, CO. Pulls event data from the Ticket
 
 ---
 
+![VenueCal Calendar View](<VenueCal - Calendar View.png>)
+
+![VenueCal Agenda View](<VenueCal - Agenda View.png>)
+
 ## Venues
 
 | Venue | Coverage |
