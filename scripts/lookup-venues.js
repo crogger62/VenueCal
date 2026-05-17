@@ -18,6 +18,7 @@ const VENUE_NAMES = [
   'Marquis Theater',
   'Bluebird Theater',
   'Summit Music Hall',
+  'Federal Theater',
 ];
 
 async function lookup(name) {

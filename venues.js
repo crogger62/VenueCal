@@ -57,4 +57,11 @@ module.exports = [
     color: '#14b8a6',
     limitedCoverage: true,
   },
+  {
+    id: 'federal',
+    name: 'The Federal Theatre',
+    tmId: 'KovZ917AVFY',
+    color: '#ef4444',
+    limitedCoverage: false,
+  },
 ];
