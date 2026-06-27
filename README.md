@@ -364,6 +364,7 @@ Edit `venues.js`. Each entry requires:
   id: 'slug-used-in-api',      // URL-safe identifier
   name: 'Display Name',
   tmId: 'KovZ...',             // Ticketmaster venue ID
+  tmAliases: ['Z7r...'],       // Optional alternate IDs returned in event payloads
   color: '#rrggbb',            // Badge color
   limitedCoverage: false,      // Set true if TM data is sparse
 }

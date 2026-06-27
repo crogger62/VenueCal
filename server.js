@@ -74,7 +74,9 @@ app.get('/api/events', async (req, res) => {
     const { events, fromCache } = await fetchEvents(tmIds, start, end, API_KEY);
 
     // Attach our internal venue metadata to each event for the frontend
-    const tmIdToVenue = Object.fromEntries(venues.map(v => [v.tmId, v]));
+    const tmIdToVenue = Object.fromEntries(
+      venues.flatMap(v => [v.tmId, ...(v.tmAliases ?? [])].map(tmId => [tmId, v]))
+    );
     const enriched = events.map(e => {
       const meta = tmIdToVenue[e.venueId] ?? null;
       return {

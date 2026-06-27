@@ -96,7 +96,7 @@ function showError(msg) {
   el.textContent = msg || '';
 }
 
-// ── Event row HTML (shared by day panel + agenda) ─────────────────────────────
+// ── Event row HTML (shared by day panel + agenda + venues) ────────────────────
 
 function eventRowHTML(e) {
   const venue = state.venues[e.venueSlug];
@@ -244,14 +244,61 @@ function renderAgenda() {
   ).join('');
 }
 
+// ── Venues ────────────────────────────────────────────────────────────────────
+
+function renderVenues() {
+  const byVenue = {};
+  for (const venue of Object.values(state.venues)) {
+    byVenue[venue.id] = {};
+  }
+
+  for (const e of state.events) {
+    if (!e.date || !e.venueSlug) continue;
+    const venueDates = byVenue[e.venueSlug] || (byVenue[e.venueSlug] = {});
+    (venueDates[e.date] = venueDates[e.date] || []).push(e);
+  }
+
+  document.getElementById('venue-list').innerHTML = Object.values(state.venues).map(venue => {
+    const dates = Object.keys(byVenue[venue.id] || {}).sort();
+    const bg = venue.color + '22';
+    const limited = venue.limitedCoverage
+      ? '<span class="venue-coverage">Limited Ticketmaster coverage</span>'
+      : '';
+
+    const body = dates.length
+      ? dates.map(dateStr =>
+          `<div class="venue-date-group">
+            <div class="agenda-date-header">${formatDateShort(dateStr)}</div>
+            ${byVenue[venue.id][dateStr].map(eventRowHTML).join('')}
+          </div>`
+        ).join('')
+      : '<p class="venue-empty">No events in the next 90 days.</p>';
+
+    return `<section class="venue-section">
+      <div class="venue-section-header">
+        <div>
+          <h3>${venue.name}</h3>
+          ${limited}
+        </div>
+        <span class="venue-count" style="background:${bg};color:${venue.color}">
+          ${dates.reduce((sum, dateStr) => sum + byVenue[venue.id][dateStr].length, 0)}
+        </span>
+      </div>
+      ${body}
+    </section>`;
+  }).join('');
+}
+
 // ── View switching ────────────────────────────────────────────────────────────
 
 async function showCalendar() {
   state.view = 'calendar';
   document.getElementById('view-calendar').hidden = false;
   document.getElementById('view-agenda').hidden   = true;
+  document.getElementById('view-venues').hidden   = true;
   document.getElementById('btn-calendar').classList.add('active');
   document.getElementById('btn-agenda').classList.remove('active');
+  document.getElementById('btn-venues').classList.remove('active');
 
   const firstOfMonth = isoDate(state.year, state.month, 1);
   const lastOfMonth  = isoDate(state.year, state.month,
@@ -265,14 +312,32 @@ async function showAgenda() {
   state.view = 'agenda';
   document.getElementById('view-calendar').hidden = true;
   document.getElementById('view-agenda').hidden   = false;
+  document.getElementById('view-venues').hidden   = true;
   document.getElementById('btn-agenda').classList.add('active');
   document.getElementById('btn-calendar').classList.remove('active');
+  document.getElementById('btn-venues').classList.remove('active');
 
   const start = today.toISOString().slice(0, 10);
   const end   = new Date(today.getTime() + 90 * 86400_000).toISOString().slice(0, 10);
 
   await loadEvents(start, end);
   renderAgenda();
+}
+
+async function showVenues() {
+  state.view = 'venues';
+  document.getElementById('view-calendar').hidden = true;
+  document.getElementById('view-agenda').hidden   = true;
+  document.getElementById('view-venues').hidden   = false;
+  document.getElementById('btn-venues').classList.add('active');
+  document.getElementById('btn-calendar').classList.remove('active');
+  document.getElementById('btn-agenda').classList.remove('active');
+
+  const start = today.toISOString().slice(0, 10);
+  const end   = new Date(today.getTime() + 90 * 86400_000).toISOString().slice(0, 10);
+
+  await loadEvents(start, end);
+  renderVenues();
 }
 
 // ── Month nav ─────────────────────────────────────────────────────────────────
@@ -300,6 +365,7 @@ async function refresh() {
     await fetch('/api/cache/bust', { method: 'POST' });
     state.loadedRange = null; // force re-fetch
     if (state.view === 'calendar') await showCalendar();
+    else if (state.view === 'venues') await showVenues();
     else await showAgenda();
   } catch (err) {
     showError('Refresh failed: ' + err.message);
@@ -313,6 +379,7 @@ async function refresh() {
 async function init() {
   document.getElementById('btn-calendar').addEventListener('click', showCalendar);
   document.getElementById('btn-agenda').addEventListener('click', showAgenda);
+  document.getElementById('btn-venues').addEventListener('click', showVenues);
   document.getElementById('btn-refresh').addEventListener('click', refresh);
   document.getElementById('prev-month').addEventListener('click', prevMonth);
   document.getElementById('next-month').addEventListener('click', nextMonth);
