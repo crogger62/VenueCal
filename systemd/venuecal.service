@@ -1,0 +1,19 @@
+[Unit]
+Description=VenueCal web app
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User=crog
+Group=crog
+WorkingDirectory=/home/crog/Projects/VenueCal
+Environment=NODE_ENV=production
+ExecStart=/usr/bin/npm start
+Restart=on-failure
+RestartSec=10
+KillSignal=SIGINT
+SyslogIdentifier=venuecal
+
+[Install]
+WantedBy=multi-user.target

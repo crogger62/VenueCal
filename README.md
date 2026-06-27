@@ -206,6 +206,47 @@ Running `npm start` (or `node scripts/fetch-and-cache.js`) nightly keeps event d
 0 3 * * * node /path/to/VenueCal/scripts/fetch-and-cache.js
 ```
 
+For this machine, a concrete example would be:
+
+```cron
+0 3 * * * /usr/bin/node /home/crog/Projects/VenueCal/scripts/fetch-and-cache.js >> /home/crog/Projects/VenueCal/fetch-and-cache.log 2>&1
+```
+
+This runs the cache refresh every day at `3:00 AM` and appends output to `fetch-and-cache.log`.
+
+## systemd service
+
+This repo includes a ready-to-install unit at [systemd/venuecal.service](/home/crog/Projects/VenueCal/systemd/venuecal.service:1) for this machine.
+
+It runs VenueCal as user `crog` from:
+
+```text
+/home/crog/Projects/VenueCal
+```
+
+and starts the app using the normal production command:
+
+```bash
+/usr/bin/npm start
+```
+
+### Install as a system service
+
+```bash
+sudo cp /home/crog/Projects/VenueCal/systemd/venuecal.service /etc/systemd/system/venuecal.service
+sudo systemctl daemon-reload
+sudo systemctl enable --now venuecal.service
+```
+
+### Check status and logs
+
+```bash
+systemctl status venuecal.service
+journalctl -u venuecal.service -f
+```
+
+If you move the repo or run it as a different user, update `User=`, `Group=`, and `WorkingDirectory=` in the unit file before installing it.
+
 ---
 
 ## API reference
